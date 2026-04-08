@@ -2,143 +2,65 @@ import React, { useState } from "react";
 import "./home.css";
 
 function Home() {
+  // State for input
+  const [taskInput, setTaskInput] = useState("");
 
+  // State for task list (array)
   const [tasks, setTasks] = useState([
-    {
-      title: "Learn React",
-      description: "Understand hooks and components",
-      status: "Pending"
-    },
-    {
-      title: "Build Dashboard",
-      description: "Create UI using flexbox and grid",
-      status: "Completed"
-    }
+    "Learn JS",
+    "Complete UI",
+    "Fix bugs"
   ]);
 
+  // Add Task
+  const addTask = () => {
+    if (taskInput.trim() === "") return;
 
-  const [showModal, setShowModal] = useState(false);
-
-
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: ""
-  });
-
-
-  const handleChange = (e) => {
-    setNewTask({
-      ...newTask,
-      [e.target.name]: e.target.value
-    });
+    setTasks([...tasks, taskInput]); // push into array
+    setTaskInput(""); // clear input
   };
 
-
-  const handleSave = () => {
-    if (newTask.title.trim() && newTask.description.trim()) {
-      const task = {
-        ...newTask,
-        status: "Pending"
-      };
-
-      setTasks([...tasks, task]);
-
-
-      setNewTask({ title: "", description: "" });
-      setShowModal(false);
-    } else {
-      alert("Please fill all fields");
-    }
+  // Delete Task
+  const deleteTask = (index) => {
+    const updatedTasks = tasks.filter((_, i) => i !== index);
+    setTasks(updatedTasks);
   };
 
   return (
-    <div className="dashboard-container">
+    <div className="todo-container">
 
+      <h1>Task Manager ✅</h1>
 
-      <div className="sidebar">
-        <h2 className="logo">MyApp</h2>
+      {/* Input + Add Button */}
+      <div className="input-section">
+        <input
+          type="text"
+          placeholder="Enter Task"
+          value={taskInput}
+          onChange={(e) => setTaskInput(e.target.value)}
+        />
 
-        <ul className="nav-links">
-          <li className="active">Dashboard</li>
-          <li>Tasks</li>
-          <li className="logout">Logout</li>
-        </ul>
+        <button onClick={addTask}>Add</button>
       </div>
 
+      {/* Task List */}
+      <ul className="task-list">
+        {tasks.map((task, index) => (
+          <li key={index} className="task-item">
 
-      <div className="main-content">
+            <span>{task}</span>
 
+            <button
+              className="delete-btn"
+              onClick={() => deleteTask(index)}
+            >
+              Delete
+            </button>
 
-        <div className="top-bar">
-          <h1>Task Dashboard</h1>
-          <button
-            className="add-btn"
-            onClick={() => setShowModal(true)}
-          >
-            + Add Task
-          </button>
-        </div>
+          </li>
+        ))}
+      </ul>
 
-
-        <div className="welcome">
-          <h2>Welcome Back 👋</h2>
-          <p>Manage your daily tasks efficiently</p>
-        </div>
-
-
-        <div className="task-grid">
-          {tasks.map((task, index) => (
-            <div className="task-card" key={index}>
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-
-              <span className={`status ${task.status}`}>
-                {task.status}
-              </span>
-            </div>
-          ))}
-        </div>
-
-      </div>
-
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-
-            <h2>Add New Task</h2>
-
-            <input
-              type="text"
-              name="title"
-              placeholder="Enter title"
-              value={newTask.title}
-              onChange={handleChange}
-            />
-
-            <textarea
-              name="description"
-              placeholder="Enter description"
-              value={newTask.description}
-              onChange={handleChange}
-            />
-
-            <div className="modal-buttons">
-              <button className="save" onClick={handleSave}>
-                Save
-              </button>
-
-              <button
-                className="cancel"
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 }
