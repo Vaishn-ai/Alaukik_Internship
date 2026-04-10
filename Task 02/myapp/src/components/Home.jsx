@@ -1,37 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./home.css";
 
 function Home() {
-  // State for input
+
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem("tasks");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [taskInput, setTaskInput] = useState("");
+  const [editIndex, setEditIndex] = useState(null);
 
-  // State for task list (array)
-  const [tasks, setTasks] = useState([
-    "Learn JS",
-    "Complete UI",
-    "Fix bugs"
-  ]);
 
-  // Add Task
-  const addTask = () => {
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+
+  const handleAddOrUpdate = () => {
     if (taskInput.trim() === "") return;
 
-    setTasks([...tasks, taskInput]); // push into array
-    setTaskInput(""); // clear input
+    if (editIndex !== null) {
+
+      const updatedTasks = [...tasks];
+      updatedTasks[editIndex] = taskInput;
+      setTasks(updatedTasks);
+      setEditIndex(null);
+    } else {
+
+      setTasks([...tasks, taskInput]);
+    }
+
+    setTaskInput("");
   };
 
-  // Delete Task
+
   const deleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
 
+
+  const editTask = (index) => {
+    setTaskInput(tasks[index]);
+    setEditIndex(index);
+  };
+
   return (
     <div className="todo-container">
 
-      <h1>Task Manager ✅</h1>
+      <h1>Task Manager 🚀</h1>
 
-      {/* Input + Add Button */}
+
       <div className="input-section">
         <input
           type="text"
@@ -40,22 +60,33 @@ function Home() {
           onChange={(e) => setTaskInput(e.target.value)}
         />
 
-        <button onClick={addTask}>Add</button>
+        <button onClick={handleAddOrUpdate}>
+          {editIndex !== null ? "Update" : "Add"}
+        </button>
       </div>
 
-      {/* Task List */}
+
       <ul className="task-list">
         {tasks.map((task, index) => (
           <li key={index} className="task-item">
 
             <span>{task}</span>
 
-            <button
-              className="delete-btn"
-              onClick={() => deleteTask(index)}
-            >
-              Delete
-            </button>
+            <div className="btn-group">
+              <button
+                className="edit-btn"
+                onClick={() => editTask(index)}
+              >
+                Edit
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteTask(index)}
+              >
+                Delete
+              </button>
+            </div>
 
           </li>
         ))}
