@@ -1,17 +1,30 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import "./style.css";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../style/Navbar.css";
 
 function Navbar() {
-  return (
-    <nav className="navbar">
-      <h2 className="logo">MyApp</h2>
+  const navigate = useNavigate();
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
-      <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/Login">Login</Link>
-        <Link to="/register">Register</Link>
-      </div>
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    navigate("/login");
+  };
+
+  return (
+    <nav>
+      <h2>MyApp</h2>
+
+      <Link to="/">Home</Link>
+
+      {!isLoggedIn ? (
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Register</Link>
+        </>
+      ) : (
+        <button onClick={handleLogout}>Logout</button>
+      )}
     </nav>
   );
 }
