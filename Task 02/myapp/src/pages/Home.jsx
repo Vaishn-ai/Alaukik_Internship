@@ -5,6 +5,7 @@ import "../style/home.css";
 function Home() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -12,37 +13,54 @@ function Home() {
     status: "Pending"
   });
 
- 
   const fetchTasks = async () => {
-    const res = await fetch(`${API}/tasks`);
-    const data = await res.json();
-    setTasks(data);
+    try {
+      const res = await fetch(`${API}/tasks`);
+      const data = await res.json();
+      setTasks(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  
   const handleAdd = async () => {
     if (!form.title.trim()) return alert("Title required");
 
     setLoading(true);
 
     try {
-      const res = await fetch(`${API}/tasks`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
+      if (editId) {
+        const res = await fetch(`${API}/tasks/${editId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form)
+        });
 
-      const data = await res.json();
-      setTasks((prev) => [data.task, ...prev]);
+        const data = await res.json();
+
+        setTasks((prev) =>
+          prev.map((t) => (t._id === editId ? data.task : t))
+        );
+
+        setEditId(null);
+      } else {
+        const res = await fetch(`${API}/tasks`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form)
+        });
+
+        const data = await res.json();
+        setTasks((prev) => [data.task, ...prev]);
+      }
 
       setForm({ title: "", description: "", status: "Pending" });
     } catch (err) {
@@ -50,6 +68,15 @@ function Home() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const startEdit = (task) => {
+    setForm({
+      title: task.title,
+      description: task.description,
+      status: task.status
+    });
+    setEditId(task._id);
   };
 
   const toggleStatus = async (task) => {
@@ -73,14 +100,12 @@ function Home() {
     }
   };
 
-
   const handleDelete = async (id) => {
     try {
       await fetch(`${API}/tasks/${id}`, {
         method: "DELETE"
       });
 
-      // update UI instantly
       setTasks((prev) => prev.filter((t) => t._id !== id));
     } catch (err) {
       console.error(err);
@@ -112,7 +137,7 @@ function Home() {
         </select>
 
         <button onClick={handleAdd} disabled={loading}>
-          {loading ? "Adding..." : "Add Task"}
+          {loading ? "Saving..." : editId ? "Update Task" : "Add Task"}
         </button>
       </div>
 
@@ -131,6 +156,13 @@ function Home() {
             </span>
 
             <div className="actions">
+              <button
+                className="update-btn"
+                onClick={() => startEdit(task)}
+              >
+                Edit
+              </button>
+
               <button
                 className="update-btn"
                 onClick={() => toggleStatus(task)}
