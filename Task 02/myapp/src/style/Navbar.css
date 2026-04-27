@@ -1,60 +1,76 @@
-nav {
-  width: 100%;
-  padding: 14px 25px;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: #6366f1;
+  color: white;
+}
+
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.nav-links a,
+.nav-links span {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.nav-links a:hover,
+.nav-links span:hover {
+  text-decoration: underline;
+}
+
+
+.nav-right {
   display: flex;
   align-items: center;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   gap: 15px;
 }
 
-nav h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #222;
-  margin-right: auto;
-}
 
-nav a {
-  text-decoration: none;
+.username {
   font-size: 14px;
-  color: #444;
+  background: rgba(255,255,255,0.2);
   padding: 6px 10px;
-  border-radius: 5px;
-  transition: 0.2s;
+  border-radius: 8px;
 }
 
-nav a:hover {
-  background: #f1f3f6;
-  color: #000;
-}
 
-nav button {
+.nav-right button {
   padding: 6px 12px;
   border: none;
-  background: #ff4d4d;
-  color: white;
-  font-size: 13px;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: white;
+  color: #6366f1;
   cursor: pointer;
+  font-size: 13px;
 }
 
-nav button:hover {
-  background: #e60000;
+.nav-right button:hover {
+  background: #e5e7eb;
 }
+
 
 @media (max-width: 600px) {
-  nav {
-    flex-wrap: wrap;
+  .navbar {
+    flex-direction: column;
     gap: 10px;
   }
 
-  nav h2 {
-    width: 100%;
-  }
-
-  nav a,
-  nav button {
-    font-size: 13px;
+  .nav-links {
+    gap: 10px;
   }
 }

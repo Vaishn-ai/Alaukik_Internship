@@ -1,19 +1,20 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Home from "./pages/Home"
+import Register from "./pages/Register"
+import Login from "./pages/Login"
 import Navbar from "./components/NavBar";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar /> {/* 🔥 Always visible */}
+      <Navbar />
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
+      
     </BrowserRouter>
   );
 }
